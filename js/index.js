@@ -60,3 +60,95 @@ function showMonsters(monstersArray) {
 
 getMonsters(1)
 .then(monstersArray => showMonsters(monstersArray));
+
+function clearMonstersContainer() {
+    document.querySelector("#monster-container").innerHTML = "";
+  }
+  function createMonsterForm() {
+    const form = document.createElement("form"),
+      nameInput = document.createElement("input"),
+      ageInput = document.createElement("input"),
+      descInput = document.createElement("input"),
+      submitBtn = document.createElement("button");
+  
+    form.id = "monster-form";
+    nameInput.id = "name";
+    ageInput.id = "age";
+    descInput.id = "description";
+  
+    nameInput.placeholder = "name";
+    ageInput.placeholder = "age";
+    descInput.placeholder = "description";
+    submitBtn.textContent = "Create";
+  
+    form.appendChild(nameInput);
+    form.appendChild(ageInput);
+    form.appendChild(descInput);
+    form.appendChild(submitBtn);
+  
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const monsterObj = getFormData();
+      postMonster(monsterObj);
+      clearForm();
+      });
+  
+    document.getElementById("create-monster").appendChild(form);
+  }
+  
+  function getFormData() {
+    let a = document.querySelector("#name"),
+      b = document.querySelector("#age"),
+      c = document.querySelector("#description");
+  
+    return {
+      name: a.value,
+      age: parseFloat(b.value),
+      description: c.value,
+    };
+  }
+  
+  function postMonster(monster) {
+    let URL = `${BASE_URL}monsters`,
+      config = {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          "Accept": "application/json",
+        },
+        body: JSON.stringify(monster),
+      };
+  
+    fetch(URL, config);
+  }
+  
+  function clearForm() {
+    document.querySelector("#monster-form").reset();
+  }
+  function addNavListeners() {
+    let backBtn = document.querySelector("#back"),
+      forwardBtn = document.querySelector("#forward");
+  
+    backBtn.addEventListener("click", () => {
+      prevPage();
+    });
+  
+    forwardBtn.addEventListener("click", () => {
+      nextPage();
+    });
+  }
+  
+  function nextPage() {
+    curPage++;
+    getMonsters(curPage).then(showMonsters);
+  }
+  
+  function prevPage() {
+    if (curPage < 1) {
+      alert("You're already on the first page");
+    } else {
+      curPage--;
+      getMonsters(curPage).then(showMonsters);
+    }
+  }
+  
